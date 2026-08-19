@@ -18,15 +18,20 @@ def binary_search(treasures, target):
     low = 0
     high = len(treasures) - 1
 
+    comparisons = 0
+
     # Keep searching until the range is valid.
     while low <= high:
 
         # Find the middle position of the current search range.
         mid = (low + high) // 2
 
+        # Count the comparison with the middle element.
+        comparisons += 1
+
         # If the middle value is the target, return its index immediately.
         if treasures[mid] == target:
-            return mid
+            return mid, comparisons
 
         # If the target is larger, move the left boundary to the right half.
         elif treasures[mid] < target:
@@ -37,4 +42,4 @@ def binary_search(treasures, target):
             high = mid - 1
 
     # The target does not exist in the list.
-    return -1
+    return -1, comparisons

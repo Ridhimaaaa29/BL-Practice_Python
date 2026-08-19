@@ -32,19 +32,19 @@ def main():
         return
 
     if choice == 1:
-        sorted_players = selection_sort(players)
+        sorted_players, sorting_comparisons, sorting_swaps = selection_sort(players)
         algorithm_name = "Selection Sort"
 
     elif choice == 2:
-        sorted_players = bubble_sort(players)
+        sorted_players, sorting_comparisons, sorting_swaps = bubble_sort(players)
         algorithm_name = "Bubble Sort"
 
     elif choice == 3:
-        sorted_players = merge_sort(players)
+        sorted_players, sorting_comparisons, sorting_swaps = merge_sort(players)
         algorithm_name = "Merge Sort"
 
     elif choice == 4:
-        sorted_players = quick_sort(players)
+        sorted_players, sorting_comparisons, sorting_swaps = quick_sort(players)
         algorithm_name = "Quick Sort"
 
     else:
@@ -71,7 +71,10 @@ def main():
         print("Invalid Treasure ID.")
         return
 
-    treasure_index = binary_search(treasures, target)
+    treasure_index, binary_search_comparisons = binary_search(
+        treasures,
+        target
+    )
 
     if treasure_index != -1:
 
@@ -98,7 +101,12 @@ def main():
 
     start = input("\nEnter Start City: ").strip().upper()
     destination = input("Enter Destination City: ").strip().upper()
-    shortest_path, steps = bidirectional_bfs(kingdom_graph, start, destination) 
+
+    shortest_path, steps, bfs_nodes_visited = bidirectional_bfs(
+        kingdom_graph,
+        start,
+        destination
+    )
 
     if shortest_path:
         print("\nShortest Route:")
@@ -111,14 +119,22 @@ def main():
     print("\n===== KINGDOM EXPLORATION =====")
 
     exploration_start = input("\nEnter Starting Location: ").strip().upper()
+
     if exploration_start not in kingdom_graph:
         print("\nInvalid starting location.")
         exploration_order = []
+        dfs_nodes_visited = 0
         exploration_bonus = 0
+
     else:
-        exploration_order = dfs(kingdom_graph, exploration_start)
+        exploration_order, dfs_nodes_visited = dfs(
+            kingdom_graph,
+            exploration_start
+        )
+
         print("\nDFS Exploration Order:")
         print(" -> ".join(exploration_order))
+
         if len(exploration_order) == len(kingdom_graph):
             exploration_bonus = 100
         else:
@@ -191,6 +207,71 @@ def main():
     print("Exploration Bonus:", exploration_bonus)
     print("Final Score:", final_score)
     print("Rank:", rank)
+
+
+    # bonus challenge: game performance dashboard
+    print("\n===== ALGORITHM PERFORMANCE =====")
+
+    # Run all four sorting algorithms to compare their performance.
+    selection_result, selection_comparisons, selection_swaps = selection_sort(players)
+    bubble_result, bubble_comparisons, bubble_swaps = bubble_sort(players)
+    merge_result, merge_comparisons, merge_swaps = merge_sort(players)
+    quick_result, quick_comparisons, quick_swaps = quick_sort(players)
+
+    print("\nSelection Sort")
+    print("Comparisons:", selection_comparisons)
+    print("Swaps:", selection_swaps)
+
+    print("\nBubble Sort")
+    print("Comparisons:", bubble_comparisons)
+    print("Swaps:", bubble_swaps)
+
+    print("\nMerge Sort")
+    print("Comparisons:", merge_comparisons)
+    print("Swaps:", merge_swaps)
+
+    print("\nQuick Sort")
+    print("Comparisons:", quick_comparisons)
+    print("Swaps:", quick_swaps)
+
+    print("\nBinary Search")
+    print("Comparisons:", binary_search_comparisons)
+
+    print("\nBidirectional BFS")
+    print("Nodes Visited:", bfs_nodes_visited)
+
+    print("\nDFS")
+    print("Nodes Visited:", dfs_nodes_visited)
+
+    # Determine which sorting algorithm performed best
+    # based on the number of comparisons.
+    sorting_performance = {
+        "Selection Sort": selection_comparisons,
+        "Bubble Sort": bubble_comparisons,
+        "Merge Sort": merge_comparisons,
+        "Quick Sort": quick_comparisons
+    }
+
+    best_sorting_algorithm = min(
+        sorting_performance,
+        key=sorting_performance.get
+    )
+
+    print("\nWhich sorting algorithm performed best?")
+    print(best_sorting_algorithm)
+
+    print("\nWhich algorithm found the treasure?")
+    print("Binary Search")
+
+    print("\nWhich algorithm found the shortest route?")
+    print("Bidirectional BFS")
+
+    print("\nWhich algorithm explored the entire kingdom?")
+
+    if dfs_nodes_visited == len(kingdom_graph):
+        print("DFS")
+    else:
+        print("DFS explored", dfs_nodes_visited, "nodes.")
 
 
 if __name__ == "__main__":

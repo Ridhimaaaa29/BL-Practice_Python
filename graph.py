@@ -12,17 +12,18 @@ def bidirectional_bfs(graph, start, destination):
 
     Returns:
         tuple:
-            path  - shortest path as a list
-            steps - number of roads in the path
+            path          - shortest path as a list
+            steps         - number of roads in the path
+            nodes_visited - total nodes visited by both searches
     """
 
     # If start and destination are the same, no movement is required.
     if start == destination:
-        return [start], 0
+        return [start], 0, 1
 
     # If either node does not exist in the graph, no route can be found.
     if start not in graph or destination not in graph:
-        return [], 0
+        return [], 0, 0
 
     # Queue for searching from the starting location.
     forward_queue = deque([start])
@@ -63,8 +64,11 @@ def bidirectional_bfs(graph, start, destination):
                 )
 
                 steps = len(path) - 1
+                nodes_visited = len(
+                    forward_visited | backward_visited
+                )
 
-                return path, steps
+                return path, steps, nodes_visited
 
         # Expand the backward search.
         current = backward_queue.popleft()
@@ -82,18 +86,21 @@ def bidirectional_bfs(graph, start, destination):
 
                 meeting_point = neighbor
 
-                path = reconstruct_path(
-                    forward_parent,
-                    backward_parent,
-                    meeting_point
-                )
+                path = reconstruct_path(forward_parent, backward_parent, meeting_point)
 
                 steps = len(path) - 1
+                nodes_visited = len(
+                    forward_visited | backward_visited
+                )
 
-                return path, steps
+                return path, steps, nodes_visited
 
     # No route exists between the two locations.
-    return [], 0
+    nodes_visited = len(
+        forward_visited | backward_visited
+    )
+
+    return [], 0, nodes_visited
 
 
 def reconstruct_path(
@@ -151,8 +158,9 @@ def dfs(graph, start):
     I used stack to avoid recursion and to keep track of the nodes to visit next.
 
     Returns:
-        list:
-            Order in which nodes were visited.
+        tuple:
+            order        - order in which nodes were visited
+            nodes_visited - number of nodes visited
     """
 
     # Stack used to implement DFS iteratively.
@@ -186,4 +194,6 @@ def dfs(graph, start):
             if neighbor not in visited:
                 stack.append(neighbor)
 
-    return order
+    nodes_visited = len(visited)
+
+    return order, nodes_visited

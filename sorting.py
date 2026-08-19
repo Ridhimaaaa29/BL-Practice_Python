@@ -36,18 +36,26 @@ def selection_sort(players):
     players = players.copy()
     n = len(players)
 
+    comparisons = 0
+    swaps = 0
+
     for i in range(n):
         min_index = i
+
         for j in range(i + 1, n):
+            comparisons += 1
+
             if players[j][1] < players[min_index][1]:
                 min_index = j
 
-        players[i], players[min_index] = (
-            players[min_index],
-            players[i]
-        )
+        if min_index != i:
+            players[i], players[min_index] = (
+                players[min_index],
+                players[i]
+            )
+            swaps += 1
 
-    return players
+    return players, comparisons, swaps
 
 # 2. BUBBLE SORT
 
@@ -71,22 +79,32 @@ def bubble_sort(players):
     players = players.copy()
     n = len(players)
 
+    comparisons = 0
+    swaps = 0
+
     for i in range(n):
         # Used to detect whether any swapping occurred.
         swapped = False
+
         # Compare adjacent elements. The last i elements are already sorted.
         for j in range(n - i - 1):
+            comparisons += 1
+
             if players[j][1] > players[j + 1][1]:
                 # Swap the two players.
                 players[j], players[j + 1] = (
                     players[j + 1],
                     players[j]
                 )
+
+                swaps += 1
                 swapped = True
+
         # If no swaps occurred, the list is already sorted.
         if not swapped:
             break
-    return players
+
+    return players, comparisons, swaps
 
 # 3. MERGE SORT
 
@@ -108,7 +126,7 @@ def merge_sort(players):
 
     # A list containing zero or one element is already sorted.
     if len(players) <= 1:
-        return players
+        return players.copy(), 0, 0
 
     # Find the middle position to split the list into two halves.
     mid = len(players) // 2
@@ -118,11 +136,16 @@ def merge_sort(players):
     right = players[mid:]
 
     # Sort both halves recursively before merging them.
-    left = merge_sort(left)
-    right = merge_sort(right)
+    left, left_comparisons, left_swaps = merge_sort(left)
+    right, right_comparisons, right_swaps = merge_sort(right)
 
     # Merge the two sorted halves back into one ordered list.
-    return merge(left, right)
+    merged, merge_comparisons = merge(left, right)
+
+    comparisons = (left_comparisons + right_comparisons + merge_comparisons)
+    swaps = left_swaps + right_swaps
+
+    return merged, comparisons, swaps
 
 def merge(left, right):
     """
@@ -137,8 +160,11 @@ def merge(left, right):
     i = 0
     j = 0
 
+    comparisons = 0
+
     # Compare elements from both lists and add the smaller score to the result.
     while i < len(left) and j < len(right):
+        comparisons += 1
 
         if left[i][1] <= right[j][1]:
             result.append(left[i])
@@ -158,8 +184,7 @@ def merge(left, right):
         result.append(right[j])
         j += 1
 
-    return result
-
+    return result, comparisons
 
 # 4. QUICK SORT
 
@@ -185,7 +210,7 @@ def quick_sort(players):
 
     # A list with zero or one element is already sorted.
     if len(players) <= 1:
-        return players
+        return players.copy(), 0, 0
 
     # Select the middle element's score as the pivot.
     pivot = players[len(players) // 2][1]
@@ -195,15 +220,26 @@ def quick_sort(players):
     middle = []
     right = []
 
+    comparisons = 0
+
     # Compare every player's score with the pivot.
     for player in players:
+        comparisons += 1
 
         if player[1] < pivot:
             left.append(player)
+
         elif player[1] == pivot:
             middle.append(player)
+
         else:
             right.append(player)
 
     # Sort the left and right sections recursively, then combine everything.
-    return quick_sort(left) + middle + quick_sort(right)
+    left, left_comparisons, left_swaps = quick_sort(left)
+    right, right_comparisons, right_swaps = quick_sort(right)
+
+    comparisons += left_comparisons + right_comparisons
+    swaps = left_swaps + right_swaps
+
+    return left + middle + right, comparisons, swaps
