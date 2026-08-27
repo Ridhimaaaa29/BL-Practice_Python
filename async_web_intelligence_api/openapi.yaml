@@ -1,0 +1,168 @@
+openapi: 3.1.1
+
+info:
+  title: Async Web Intelligence Collector
+  version: 1.0.0
+  description: >
+    Client-side contract for collecting metadata from selected IMDb movie pages.
+
+paths:
+
+  /crawl:
+    post:
+      summary: Collect selected IMDb title-page information
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - urls
+              properties:
+                urls:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: string
+                    format: uri
+
+      responses:
+        '200':
+          description: Crawl completed; individual URLs may have failed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrawlResponse'
+
+  /health:
+    get:
+      summary: Health contract
+      responses:
+        '200':
+          description: Client is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    example: healthy
+
+  /results:
+    get:
+      summary: Retrieve collected results
+      responses:
+        '200':
+          description: Results contract
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - count
+                  - results
+                properties:
+                  count:
+                    type: integer
+                    minimum: 0
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CrawlResult'
+
+
+components:
+
+  schemas:
+
+    CrawlResponse:
+      type: object
+      required:
+        - total_urls
+        - successful
+        - failed
+        - results
+      properties:
+        total_urls:
+          type: integer
+          minimum: 0
+
+        successful:
+          type: integer
+          minimum: 0
+
+        failed:
+          type: integer
+          minimum: 0
+
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/CrawlResult'
+
+
+    CrawlResult:
+      type: object
+      required:
+        - url
+        - status
+        - data
+      properties:
+
+        url:
+          type: string
+          format: uri
+
+        title:
+          type:
+            - string
+            - 'null'
+
+        status:
+          type: string
+          enum:
+            - success
+            - failed
+
+        data:
+          $ref: '#/components/schemas/MovieData'
+
+        error:
+          type:
+            - string
+            - 'null'
+
+
+    MovieData:
+      type: object
+      required:
+        - genre
+        - rating
+        - release_date
+        - url
+      properties:
+
+        genre:
+          type:
+            - string
+            - 'null'
+
+        rating:
+          type:
+            - number
+            - 'null'
+
+        release_date:
+          type:
+            - string
+            - 'null'
+
+        url:
+          type:
+            - string
+            - 'null'
+          format: uri

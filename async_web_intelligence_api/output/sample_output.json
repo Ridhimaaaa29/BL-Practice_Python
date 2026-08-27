@@ -1,0 +1,10 @@
+{
+  "total_urls": 3,
+  "successful": 2,
+  "failed": 1,
+  "results": [
+    {"url": "https://www.imdb.com/title/tt0816692/", "title": "Interstellar", "status": "success", "data": {"rating": "8.7", "genre": "Adventure, Drama, Sci-Fi", "release_date": "07 Nov 2014", "movie_url": "https://www.imdb.com/title/tt0816692/"}},
+    {"url": "https://www.imdb.com/title/tt1375666/", "title": "Inception", "status": "success", "data": {"rating": "8.8", "genre": "Action, Adventure, Sci-Fi", "release_date": "16 Jul 2010", "movie_url": "https://www.imdb.com/title/tt1375666/"}},
+    {"url": "https://www.imdb.com/title/tt0133093/", "title": null, "status": "failed", "data": {}, "error": "BotVerificationChallenge"}
+  ]
+}

@@ -1,0 +1,6 @@
+requests
+httpx
+pytest
+pytest-asyncio
+crawl4ai
+PyYAML
